@@ -1,18 +1,14 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../../redux/contactsSlice";
+import { addContact } from "../../redux/contactsOps";
+import { selectContacts } from "../../redux/contactsSlice";
 import css from "./ContactForm.module.css";
 
 const ContactForm = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const contacts = useSelector((state) => state.contacts.items);
   const dispatch = useDispatch();
-
-  const handleChange = (e) => {
-    if (e.target.name === "name") setName(e.target.value);
-    if (e.target.name === "phone") setPhone(e.target.value);
-  };
+  const contacts = useSelector(selectContacts);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,10 +17,10 @@ const ContactForm = () => {
         (contact) => contact.name.toLowerCase() === name.toLowerCase()
       )
     ) {
-      alert(`${name} уже есть в контактах!`);
+      alert(`${name} вже є в контактах!`);
       return;
     }
-    dispatch(addContact({ id: Date.now(), name, phone }));
+    dispatch(addContact({ name, phone }));
     setName("");
     setPhone("");
   };
@@ -32,26 +28,22 @@ const ContactForm = () => {
   return (
     <form className={css.form} onSubmit={handleSubmit}>
       <input
-        className={css.input}
         type="text"
         name="name"
-        placeholder="Имя"
+        placeholder="Ім'я"
         value={name}
-        onChange={handleChange}
+        onChange={(e) => setName(e.target.value)}
         required
       />
       <input
-        className={css.input}
         type="text"
         name="phone"
         placeholder="Телефон"
         value={phone}
-        onChange={handleChange}
+        onChange={(e) => setPhone(e.target.value)}
         required
       />
-      <button className={css["submit-button"]} type="submit">
-        Добавить
-      </button>
+      <button type="submit">Додати</button>
     </form>
   );
 };
